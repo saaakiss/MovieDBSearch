@@ -2,7 +2,7 @@ package myapp.com.moviedbsearch.models;
 
 public class MultiSearchResponse {
 
-    private Results[] results;
+    private Result[] results;
 
     private String page;
 
@@ -10,12 +10,12 @@ public class MultiSearchResponse {
 
     private String total_results;
 
-    public Results[] getResults ()
+    public Result[] getResults ()
     {
         return results;
     }
 
-    public void setResults (Results[] results)
+    public void setResults (Result[] results)
     {
         this.results = results;
     }

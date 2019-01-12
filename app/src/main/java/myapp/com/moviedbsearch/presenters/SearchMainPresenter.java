@@ -1,7 +1,12 @@
 package myapp.com.moviedbsearch.presenters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
 import myapp.com.moviedbsearch.models.MultiSearchResponse;
+import myapp.com.moviedbsearch.models.Result;
 import myapp.com.moviedbsearch.services.FeedApi;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +40,7 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
             @Override
             public void onResponse(Call<MultiSearchResponse> call, Response<MultiSearchResponse> response) {
                 MultiSearchResponse multiSearchResults = response.body();
-
+                filterResults(Arrays.asList(multiSearchResults.getResults()));
             }
 
             @Override
@@ -45,4 +50,21 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
         });
 
     }
+
+    @Override
+    public void filterResults(List<Result> resultsResponse) {
+
+        List<Result> filteredResults = new ArrayList<>();
+
+        for (Result res : resultsResponse) {
+            if(res.getMedia_type().equals("movie") || res.getMedia_type().equals("tv")){
+                filteredResults.add(res);
+            }
+        }
+
+        mView.showMoviesTvShows(filteredResults);
+
+    }
+
+
 }

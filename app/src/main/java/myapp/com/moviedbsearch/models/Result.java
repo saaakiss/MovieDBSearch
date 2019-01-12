@@ -1,6 +1,6 @@
 package myapp.com.moviedbsearch.models;
 
-public class Results {
+public class Result {
 
     private String media_type;
 
