@@ -6,7 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -33,11 +36,13 @@ public class SearchMainAdapter extends RecyclerView.Adapter<SearchMainAdapter.Se
 
     @Override
     public void onBindViewHolder(@NonNull SearchMainHolder searchMainHolder, int i) {
-        String x = results.get(i).getName();
 
-        searchMainHolder.txtViewTitle.setText(results.get(i).getName());
-        searchMainHolder.txtViewReleaseDate.setText("Relase Date: " + results.get(i).getFirst_air_date());
+        String releaseDate = results.get(i).getFirst_air_date() != null ? results.get(i).getFirst_air_date() : "N/A";
+
+        searchMainHolder.txtViewTitle.setText(results.get(i).getName() != null ? results.get(i).getName() : "N/A");
+        searchMainHolder.txtViewReleaseDate.setText("Relase Date: " + releaseDate);
         searchMainHolder.txtViewRatings.setText("Rating: " + results.get(i).getVote_average());
+        Glide.with(context).load("https://image.tmdb.org/t/p/w500" + results.get(i).getPoster_path().trim()).into(searchMainHolder.ivLogo);
 
 
     }
@@ -52,6 +57,8 @@ public class SearchMainAdapter extends RecyclerView.Adapter<SearchMainAdapter.Se
         TextView txtViewTitle;
         TextView txtViewReleaseDate;
         TextView txtViewRatings;
+        ImageView ivLogo;
+
 
 
         public SearchMainHolder(@NonNull View itemView) {
@@ -60,7 +67,7 @@ public class SearchMainAdapter extends RecyclerView.Adapter<SearchMainAdapter.Se
             txtViewTitle = itemView.findViewById(R.id.tv_title);
             txtViewReleaseDate = itemView.findViewById(R.id.tv_release_date);
             txtViewRatings = itemView.findViewById(R.id.tv_ratings);
-
+            ivLogo = itemView.findViewById(R.id.logo);
 
         }
     }
