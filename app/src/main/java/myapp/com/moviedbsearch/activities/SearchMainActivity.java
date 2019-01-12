@@ -1,7 +1,9 @@
-package myapp.com.moviedbsearch;
+package myapp.com.moviedbsearch.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import myapp.com.moviedbsearch.R;
 
 public class SearchMainActivity extends AppCompatActivity {
 
