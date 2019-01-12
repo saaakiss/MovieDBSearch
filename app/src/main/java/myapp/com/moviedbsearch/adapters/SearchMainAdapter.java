@@ -36,6 +36,10 @@ public class SearchMainAdapter extends RecyclerView.Adapter<SearchMainAdapter.Se
         String x = results.get(i).getName();
 
         searchMainHolder.txtViewTitle.setText(results.get(i).getName());
+        searchMainHolder.txtViewReleaseDate.setText("Relase Date: " + results.get(i).getFirst_air_date());
+        searchMainHolder.txtViewRatings.setText("Rating: " + results.get(i).getVote_average());
+
+
     }
 
     @Override
@@ -46,11 +50,17 @@ public class SearchMainAdapter extends RecyclerView.Adapter<SearchMainAdapter.Se
     public class SearchMainHolder extends RecyclerView.ViewHolder{
 
         TextView txtViewTitle;
+        TextView txtViewReleaseDate;
+        TextView txtViewRatings;
+
 
         public SearchMainHolder(@NonNull View itemView) {
             super(itemView);
 
             txtViewTitle = itemView.findViewById(R.id.tv_title);
+            txtViewReleaseDate = itemView.findViewById(R.id.tv_release_date);
+            txtViewRatings = itemView.findViewById(R.id.tv_ratings);
+
 
         }
     }

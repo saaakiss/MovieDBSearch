@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     private SearchMainContract.Actions searchMainPresenter;
     private SearchMainAdapter searchMainAdapter;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
+
 
 
     @Override
@@ -26,6 +30,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         setContentView(R.layout.activity_search_main);
 
         recyclerView = (RecyclerView) findViewById(R.id.rv_movies_tvShows);
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
 
         searchMainPresenter = new SearchMainPresenter(this);
@@ -35,6 +40,8 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
 
     @Override
     public void showMoviesTvShows(List<Result> filteredResults) {
+
+        progressBar.setVisibility(View.GONE);
 
         searchMainAdapter = new SearchMainAdapter(this, filteredResults);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
