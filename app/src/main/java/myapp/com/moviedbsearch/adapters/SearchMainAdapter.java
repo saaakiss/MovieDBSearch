@@ -42,8 +42,10 @@ public class SearchMainAdapter extends RecyclerView.Adapter<SearchMainAdapter.Se
         searchMainHolder.txtViewTitle.setText(results.get(i).getName() != null ? results.get(i).getName() : "N/A");
         searchMainHolder.txtViewReleaseDate.setText("Relase Date: " + releaseDate);
         searchMainHolder.txtViewRatings.setText("Rating: " + results.get(i).getVote_average());
-        Glide.with(context).load("https://image.tmdb.org/t/p/w500" + results.get(i).getPoster_path().trim()).into(searchMainHolder.ivLogo);
 
+        if(results.get(i).getPoster_path() != null){
+            Glide.with(context).load("https://image.tmdb.org/t/p/w500" + results.get(i).getPoster_path().trim()).into(searchMainHolder.ivLogo);
+        }
 
     }
 
