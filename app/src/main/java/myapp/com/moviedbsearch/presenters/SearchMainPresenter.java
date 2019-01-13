@@ -40,7 +40,8 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
             @Override
             public void onResponse(Call<MultiSearchResponse> call, Response<MultiSearchResponse> response) {
                 MultiSearchResponse multiSearchResults = response.body();
-                filterResults(Arrays.asList(multiSearchResults.getResults()));
+                int totalPages = Integer.parseInt(multiSearchResults.getTotal_pages());
+                filterResults(Arrays.asList(multiSearchResults.getResults()), totalPages);
             }
 
             @Override
@@ -52,7 +53,32 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
     }
 
     @Override
-    public void filterResults(List<Result> resultsResponse) {
+    public void getMoreMoviewTvSHows(String query, int page) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(FeedApi.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        FeedApi feedApi = retrofit.create(FeedApi.class);
+
+        Call<MultiSearchResponse> call = feedApi.getMoreMoviesTvShows(FeedApi.API_KEY, query, page);
+
+        call.enqueue(new Callback<MultiSearchResponse>() {
+            @Override
+            public void onResponse(Call<MultiSearchResponse> call, Response<MultiSearchResponse> response) {
+                MultiSearchResponse multiSearchResults = response.body();
+                filterMoreResults(Arrays.asList(multiSearchResults.getResults()));
+            }
+
+            @Override
+            public void onFailure(Call<MultiSearchResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void filterResults(List<Result> resultsResponse, int totalPages) {
 
         List<Result> filteredResults = new ArrayList<>();
 
@@ -62,8 +88,21 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
             }
         }
 
-        mView.showMoviesTvShows(filteredResults);
+        mView.showMoviesTvShows(filteredResults, totalPages);
 
+    }
+
+    @Override
+    public void filterMoreResults(List<Result> resultsResponse) {
+        List<Result> filteredResults = new ArrayList<>();
+
+        for (Result res : resultsResponse) {
+            if(res.getMedia_type().equals("movie") || res.getMedia_type().equals("tv")){
+                filteredResults.add(res);
+            }
+        }
+
+        mView.showMoreMoviesTvShows(filteredResults);
     }
 
 

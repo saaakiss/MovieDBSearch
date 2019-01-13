@@ -2,6 +2,7 @@ package myapp.com.moviedbsearch.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -19,13 +20,22 @@ import myapp.com.moviedbsearch.adapters.SearchMainAdapter;
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
 import myapp.com.moviedbsearch.models.Result;
 import myapp.com.moviedbsearch.presenters.SearchMainPresenter;
+import myapp.com.moviedbsearch.utils.PaginationScrollListener;
 
 public class SearchMainActivity extends AppCompatActivity implements SearchMainContract.View {
 
     private SearchMainContract.Actions searchMainPresenter;
     private SearchMainAdapter searchMainAdapter;
+    private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
+
+    private static final int PAGE_START = 1;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private int TOTAL_PAGES = 1;
+    private int currentPage = PAGE_START;
+    private String mQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +51,13 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         searchMainPresenter = new SearchMainPresenter(this);
     }
 
+    private void initVariables(){
+        isLastPage = false;
+        isLoading = false;
+        TOTAL_PAGES = 1;
+        currentPage = PAGE_START;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -54,6 +71,8 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                initVariables();
+                mQuery  = query;
                 progressBar.setVisibility(View.VISIBLE);
                 searchMainPresenter.getMoviewTvShows(query);
                 return false;
@@ -80,17 +99,68 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     }
 
     @Override
-    public void showMoviesTvShows(List<Result> filteredResults) {
+    public void showMoviesTvShows(List<Result> filteredResults, int totalPages) {
 
-        progressBar.setVisibility(View.GONE);
+        TOTAL_PAGES = totalPages;
 
         searchMainAdapter = new SearchMainAdapter(this, filteredResults);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        recyclerView.setHasFixedSize(true);
-
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(searchMainAdapter);
 
+        recyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                isLoading = true;
+                currentPage += 1;
 
+                loadNextPage();
+            }
+
+            @Override
+            public int getTotalPageCount() {
+                return TOTAL_PAGES;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+        });
+
+        loadFirstPage();
+
+    }
+
+    private void loadFirstPage(){
+        progressBar.setVisibility(View.GONE);
+
+        if (currentPage <= TOTAL_PAGES) searchMainAdapter.addLoadingFooter();
+        else isLastPage = true;
+    }
+
+    private void loadNextPage(){
+        searchMainPresenter.getMoreMoviewTvSHows(mQuery, currentPage);
+
+
+    }
+
+    @Override
+    public void showMoreMoviesTvShows(List<Result> moreFilteredResults) {
+
+        searchMainAdapter.removeLoadingFooter();
+        isLoading = false;
+
+        searchMainAdapter.addAll(moreFilteredResults);
+
+        if (currentPage != TOTAL_PAGES) searchMainAdapter.addLoadingFooter();
+        else isLastPage = true;
     }
 
     @Override

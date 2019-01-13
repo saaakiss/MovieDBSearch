@@ -14,4 +14,7 @@ public interface FeedApi {
     @GET("search/multi")
     Call<MultiSearchResponse> getMoviesTvShows(@Query("api_key") String api_key, @Query("query") String query);
 
+    @GET("search/multi")
+    Call<MultiSearchResponse> getMoreMoviesTvShows(@Query("api_key") String api_key, @Query("query") String query, @Query("page") int page);
+
 }
