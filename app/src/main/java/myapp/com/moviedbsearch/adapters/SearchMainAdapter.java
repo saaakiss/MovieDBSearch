@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import myapp.com.moviedbsearch.R;
+import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
 import myapp.com.moviedbsearch.models.Result;
 
 public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -23,13 +24,16 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Context context;
     private List<Result> results;
+    private RecyclerClickListener recyclerClickListener;
 
     private boolean isLoadingAdded = false;
 
 
-    public SearchMainAdapter(Context context, List<Result> results){
+
+    public SearchMainAdapter(Context context, List<Result> results, RecyclerClickListener recyclerClickListener){
         this.context = context;
         this.results = results;
+        this.recyclerClickListener = recyclerClickListener;
     }
 
     @NonNull
@@ -106,6 +110,13 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             txtViewReleaseDate = itemView.findViewById(R.id.tv_release_date);
             txtViewRatings = itemView.findViewById(R.id.tv_ratings);
             ivLogo = itemView.findViewById(R.id.logo);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerClickListener.onItemClicked(results.get(getLayoutPosition()));
+                }
+            });
 
         }
     }

@@ -12,17 +12,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.List;
 
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.adapters.SearchMainAdapter;
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
+import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
 import myapp.com.moviedbsearch.models.Result;
 import myapp.com.moviedbsearch.presenters.SearchMainPresenter;
 import myapp.com.moviedbsearch.utils.PaginationScrollListener;
 
-public class SearchMainActivity extends AppCompatActivity implements SearchMainContract.View {
+public class SearchMainActivity extends AppCompatActivity implements SearchMainContract.View, RecyclerClickListener {
 
     private SearchMainContract.Actions searchMainPresenter;
     private SearchMainAdapter searchMainAdapter;
@@ -103,7 +105,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
 
         TOTAL_PAGES = totalPages;
 
-        searchMainAdapter = new SearchMainAdapter(this, filteredResults);
+        searchMainAdapter = new SearchMainAdapter(this, filteredResults, this);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -161,6 +163,12 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
 
         if (currentPage != TOTAL_PAGES) searchMainAdapter.addLoadingFooter();
         else isLastPage = true;
+    }
+
+    @Override
+    public void onItemClicked(Object result)
+    {
+
     }
 
     @Override
