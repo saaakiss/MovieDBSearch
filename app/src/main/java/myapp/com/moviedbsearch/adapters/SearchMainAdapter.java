@@ -15,7 +15,7 @@ import java.util.List;
 
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
-import myapp.com.moviedbsearch.models.Result;
+import myapp.com.moviedbsearch.models.SearchMulti.Result;
 
 public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -75,7 +75,7 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 searchMainHolder.txtViewRatings.setText("Rating: " + results.get(position).getVote_average());
 
                 if(results.get(position).getPoster_path() != null){
-                    Glide.with(context).load("https://image.tmdb.org/t/p/w500" + results.get(position).getPoster_path().trim()).into(searchMainHolder.ivLogo);
+                    Glide.with(context).load("https://image.tmdb.org/t/p/original" + results.get(position).getPoster_path().trim()).into(searchMainHolder.ivLogo);
                 }
                 break;
             case LOADING:

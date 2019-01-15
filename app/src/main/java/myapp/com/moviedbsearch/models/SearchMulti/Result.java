@@ -1,6 +1,8 @@
-package myapp.com.moviedbsearch.models;
+package myapp.com.moviedbsearch.models.SearchMulti;
 
-public class Result {
+import java.io.Serializable;
+
+public class Result implements Serializable {
 
     private String media_type;
 

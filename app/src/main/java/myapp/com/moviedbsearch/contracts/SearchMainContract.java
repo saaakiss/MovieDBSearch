@@ -2,7 +2,7 @@ package myapp.com.moviedbsearch.contracts;
 
 import java.util.List;
 
-import myapp.com.moviedbsearch.models.Result;
+import myapp.com.moviedbsearch.models.SearchMulti.Result;
 
 public class SearchMainContract {
 

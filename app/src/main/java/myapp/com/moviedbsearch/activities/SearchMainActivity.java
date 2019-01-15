@@ -1,5 +1,6 @@
 package myapp.com.moviedbsearch.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.adapters.SearchMainAdapter;
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
 import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
-import myapp.com.moviedbsearch.models.Result;
+import myapp.com.moviedbsearch.models.SearchMulti.Result;
 import myapp.com.moviedbsearch.presenters.SearchMainPresenter;
 import myapp.com.moviedbsearch.utils.PaginationScrollListener;
 
@@ -38,6 +38,9 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     private int TOTAL_PAGES = 1;
     private int currentPage = PAGE_START;
     private String mQuery;
+
+    private static final String RESULT = "result";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +146,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     private void loadFirstPage(){
         progressBar.setVisibility(View.GONE);
 
-        if (currentPage <= TOTAL_PAGES) searchMainAdapter.addLoadingFooter();
+        if (currentPage < TOTAL_PAGES) searchMainAdapter.addLoadingFooter();
         else isLastPage = true;
     }
 
@@ -159,16 +162,24 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         searchMainAdapter.removeLoadingFooter();
         isLoading = false;
 
+
         searchMainAdapter.addAll(moreFilteredResults);
 
-        if (currentPage != TOTAL_PAGES) searchMainAdapter.addLoadingFooter();
-        else isLastPage = true;
+
+        if (currentPage != TOTAL_PAGES) {
+            searchMainAdapter.addLoadingFooter();
+        }
+        else{
+            isLastPage = true;
+        }
     }
 
     @Override
     public void onItemClicked(Object result)
     {
-
+        Intent resultIntent = new Intent(this, DetailsActivity.class);
+        resultIntent.putExtra(RESULT, (Result)result);
+        startActivity(resultIntent);
     }
 
     @Override

@@ -1,9 +1,14 @@
 package myapp.com.moviedbsearch.services;
 
-import myapp.com.moviedbsearch.models.MultiSearchResponse;
+import java.util.List;
+
+import myapp.com.moviedbsearch.models.MovieDetails.MovieDetails;
+import myapp.com.moviedbsearch.models.SearchMulti.MultiSearchResponse;
+import myapp.com.moviedbsearch.models.TvDetails.TvDetails;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface FeedApi {
 
@@ -17,4 +22,9 @@ public interface FeedApi {
     @GET("search/multi")
     Call<MultiSearchResponse> getMoreMoviesTvShows(@Query("api_key") String api_key, @Query("query") String query, @Query("page") int page);
 
+    @GET
+    Call<MovieDetails> getMovieDetails(@Url String movieDetailsUrl);
+
+    @GET
+    Call<TvDetails> getTvDetails(@Url String tvDetailsUrl);
 }

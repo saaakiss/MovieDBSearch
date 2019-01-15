@@ -1,4 +1,4 @@
-package myapp.com.moviedbsearch.models;
+package myapp.com.moviedbsearch.models.SearchMulti;
 
 public class MultiSearchResponse {
 

@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
-import myapp.com.moviedbsearch.models.MultiSearchResponse;
-import myapp.com.moviedbsearch.models.Result;
+import myapp.com.moviedbsearch.models.SearchMulti.MultiSearchResponse;
+import myapp.com.moviedbsearch.models.SearchMulti.Result;
 import myapp.com.moviedbsearch.services.FeedApi;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -16,21 +16,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SearchMainPresenter implements SearchMainContract.Actions {
 
-    private static final String TAG = "SearchMainPresenter";
-
     private SearchMainContract.View mView;
+    private Retrofit retrofit;
 
     public SearchMainPresenter(SearchMainContract.View mView){
+
         this.mView = mView;
+        retrofit = new Retrofit.Builder()
+                .baseUrl(FeedApi.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     @Override
     public void getMoviewTvShows(String query) {
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(FeedApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
         FeedApi feedApi = retrofit.create(FeedApi.class);
 
@@ -54,10 +53,6 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
 
     @Override
     public void getMoreMoviewTvSHows(String query, int page) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(FeedApi.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
         FeedApi feedApi = retrofit.create(FeedApi.class);
 
