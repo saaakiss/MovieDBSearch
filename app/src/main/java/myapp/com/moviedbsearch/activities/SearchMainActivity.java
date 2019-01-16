@@ -172,6 +172,16 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         else{
             isLastPage = true;
         }
+
+        if(moreFilteredResults.size() == 0 && !isLastPage){
+            isLoading = true;
+            currentPage += 1;
+
+            loadNextPage();
+        }
+        else if(isLastPage){
+            searchMainAdapter.removeLoadingFooter();
+        }
     }
 
     @Override
