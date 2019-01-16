@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -74,9 +75,11 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 searchMainHolder.txtViewReleaseDate.setText("Relase Date: " + releaseDate);
                 searchMainHolder.txtViewRatings.setText("Rating: " + results.get(position).getVote_average());
 
-                if(results.get(position).getPoster_path() != null){
-                    Glide.with(context).load("https://image.tmdb.org/t/p/original" + results.get(position).getPoster_path().trim()).into(searchMainHolder.ivLogo);
-                }
+                RequestOptions requestOptions = new RequestOptions();
+                requestOptions.error(R.drawable.ic_placeholder);
+
+                Glide.with(context).load("https://image.tmdb.org/t/p/original" + results.get(position).getPoster_path()).apply(requestOptions).into(searchMainHolder.ivLogo);
+
                 break;
             case LOADING:
                 break;

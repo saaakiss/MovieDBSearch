@@ -2,8 +2,11 @@ package myapp.com.moviedbsearch.activities;
 
 import android.content.Intent;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.contracts.DetailsContract;
@@ -49,6 +53,10 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         Result result = (Result) intent.getSerializableExtra(RESULT);
 
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        setTitle("Movie Details");
 
         mPresenter = new DetailsPresenter(this);
 
@@ -57,11 +65,30 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void showResultDetails(SelectedItemDetails selectedItemDetails) {
 
-        Glide.with(this).load(selectedItemDetails.getImage()).into(imageView);
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.error(R.drawable.ic_placeholder);
+
+        Glide.with(this).load(selectedItemDetails.getImage()).apply(requestOptions).into(imageView);
+
         textViewTitle.setText(selectedItemDetails.getTitle());
-        textViewGenre.setText(selectedItemDetails.getGenre());
+        textViewGenre.setText("Genre: " + selectedItemDetails.getGenre());
         textViewSummary.setText(selectedItemDetails.getSummary());
 
         progressBar.setVisibility(View.GONE);

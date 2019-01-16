@@ -83,7 +83,8 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
         selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + movieDetails.getPoster_path());
         selectedItemDetails.setTitle(movieDetails.getTitle());
-        selectedItemDetails.setSummary(movieDetails.getOverview());
+        String summary = movieDetails.getOverview() != null && !movieDetails.getOverview().trim().isEmpty() ? movieDetails.getOverview() : "N/A";
+        selectedItemDetails.setSummary(summary);
         String genre = movieDetails.getGenres() != null && movieDetails.getGenres().length > 0 ? movieDetails.getGenres()[0].getName() : "N/A";
         selectedItemDetails.setGenre(genre);
         selectedItemDetails.setId(movieDetails.getId());
@@ -98,7 +99,8 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
         selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + tvDetails.getPoster_path());
         selectedItemDetails.setTitle(tvDetails.getName());
-        selectedItemDetails.setSummary(tvDetails.getOverview());
+        String summary = tvDetails.getOverview() != null && !tvDetails.getOverview().trim().isEmpty() ? tvDetails.getOverview() : "N/A";
+        selectedItemDetails.setSummary(summary);
         String genre = tvDetails.getGenres() != null && tvDetails.getGenres().length > 0 ? tvDetails.getGenres()[0].getName() : "N/A";
         selectedItemDetails.setGenre(genre);
         selectedItemDetails.setId(tvDetails.getId());
