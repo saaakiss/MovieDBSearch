@@ -2,6 +2,7 @@ package myapp.com.moviedbsearch.models.TvDetails;
 
 import myapp.com.moviedbsearch.models.MovieDetails.Genres;
 import myapp.com.moviedbsearch.models.MovieDetails.ProductionCompany;
+import myapp.com.moviedbsearch.models.MovieDetails.Videos;
 
 public class TvDetails {
 
@@ -61,6 +62,8 @@ public class TvDetails {
 
     private String poster_path;
 
+    private Videos videos;
+
     public String getVote_average ()
     {
         return vote_average;
@@ -89,6 +92,16 @@ public class TvDetails {
     public void setEpisode_run_time (String[] episode_run_time)
     {
         this.episode_run_time = episode_run_time;
+    }
+
+    public Videos getVideos ()
+    {
+        return videos;
+    }
+
+    public void setVideos (Videos videos)
+    {
+        this.videos = videos;
     }
 
     public String getType ()

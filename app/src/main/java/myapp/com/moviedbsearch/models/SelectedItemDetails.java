@@ -14,6 +14,8 @@ public class SelectedItemDetails {
 
     private String ItemType;
 
+    private String TrailerUrl;
+
     public String getImage() {
         return image;
     }
@@ -60,6 +62,14 @@ public class SelectedItemDetails {
 
     public void setItemType(String itemType) {
         ItemType = itemType;
+    }
+
+    public String getTrailerUrl() {
+        return TrailerUrl;
+    }
+
+    public void setTrailerUrl(String trailerUrl) {
+        TrailerUrl = trailerUrl;
     }
 
 }

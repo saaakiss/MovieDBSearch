@@ -1,10 +1,12 @@
 package myapp.com.moviedbsearch.presenters;
 
 import java.util.Arrays;
+import java.util.List;
 
 import myapp.com.moviedbsearch.contracts.DetailsContract;
 import myapp.com.moviedbsearch.models.Enums.ItemType;
 import myapp.com.moviedbsearch.models.MovieDetails.MovieDetails;
+import myapp.com.moviedbsearch.models.MovieDetails.Results;
 import myapp.com.moviedbsearch.models.SearchMulti.MultiSearchResponse;
 import myapp.com.moviedbsearch.models.SearchMulti.Result;
 import myapp.com.moviedbsearch.models.SelectedItemDetails;
@@ -37,7 +39,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
         FeedApi feedApi = retrofit.create(FeedApi.class);
 
         if(result.getMedia_type().equals("movie")){
-            String movieDetailsUrl = "movie/" + result.getId() + "?" + "api_key=" + FeedApi.API_KEY;
+            String movieDetailsUrl = "movie/" + result.getId() + "?api_key=" + FeedApi.API_KEY + "&append_to_response=videos";
             Call<MovieDetails> call = feedApi.getMovieDetails(movieDetailsUrl);
 
             call.enqueue(new Callback<MovieDetails>() {
@@ -56,7 +58,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
         }
         else {
-            String tvDetailsUrl = "tv/" + result.getId() + "?" + "api_key=" + FeedApi.API_KEY;
+            String tvDetailsUrl = "tv/" + result.getId() + "?api_key=" + FeedApi.API_KEY + "&append_to_response=videos";
             Call<TvDetails> call = feedApi.getTvDetails(tvDetailsUrl);
 
             call.enqueue(new Callback<TvDetails>() {
@@ -90,6 +92,17 @@ public class DetailsPresenter implements DetailsContract.Actions {
         selectedItemDetails.setId(movieDetails.getId());
         selectedItemDetails.setItemType(ItemType.MOVIE.toString());
 
+        if(movieDetails.getVideos() != null && movieDetails.getVideos().getResults() != null){
+            for (Results res : movieDetails.getVideos().getResults())
+            {
+                if(res.getSite().equals("YouTube") && res.getType().equals("Trailer")){
+                    selectedItemDetails.setTrailerUrl("https://www.youtube.com/watch?v=" + res.getKey());
+                    break;
+                }
+            }
+
+        }
+
         mView.showResultDetails(selectedItemDetails);
     }
 
@@ -105,6 +118,17 @@ public class DetailsPresenter implements DetailsContract.Actions {
         selectedItemDetails.setGenre(genre);
         selectedItemDetails.setId(tvDetails.getId());
         selectedItemDetails.setItemType(ItemType.TV.toString());
+
+        if(tvDetails.getVideos() != null && tvDetails.getVideos().getResults() != null){
+            for (Results res : tvDetails.getVideos().getResults())
+            {
+                if(res.getSite().equals("YouTube") && res.getType().equals("Trailer")){
+                    selectedItemDetails.setTrailerUrl("https://www.youtube.com/watch?v=" + res.getKey());
+                    break;
+                }
+            }
+
+        }
 
         mView.showResultDetails(selectedItemDetails);
     }

@@ -52,6 +52,8 @@ public class MovieDetails {
 
     private String popularity;
 
+    private Videos videos;
+
     public String getBudget ()
     {
         return budget;
@@ -210,6 +212,16 @@ public class MovieDetails {
     public void setBelongs_to_collection (Object belongs_to_collection)
     {
         this.belongs_to_collection = belongs_to_collection;
+    }
+
+    public Videos getVideos ()
+    {
+        return videos;
+    }
+
+    public void setVideos (Videos videos)
+    {
+        this.videos = videos;
     }
 
     public String getImdb_id ()
