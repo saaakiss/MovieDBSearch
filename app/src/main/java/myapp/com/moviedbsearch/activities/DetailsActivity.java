@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,7 +35,8 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     private TextView textViewTitle;
     private TextView textViewGenre;
     private TextView textViewSummary;
-
+    private WebView videoWeb;
+    private TextView textViewVideoWebTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,10 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         textViewTitle = findViewById(R.id.movie_title);
         textViewGenre = findViewById(R.id.movie_genre);
         textViewSummary = findViewById(R.id.tv_summary);
+        videoWeb = findViewById(R.id.videoWebView);
+        textViewVideoWebTitle = findViewById(R.id.videoWebViewTitle);
+
+        videoWeb.setVisibility(View.GONE);
 
         Intent intent = getIntent();
         Result result = (Result) intent.getSerializableExtra(RESULT);
@@ -90,6 +97,24 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         textViewTitle.setText(selectedItemDetails.getTitle());
         textViewGenre.setText("Genre: " + selectedItemDetails.getGenre());
         textViewSummary.setText(selectedItemDetails.getSummary());
+
+        if(selectedItemDetails.getTrailerUrl() != null){
+
+            textViewVideoWebTitle.setText("Watch Trailer");
+            videoWeb.setVisibility(View.VISIBLE);
+
+            videoWeb.getSettings().setJavaScriptEnabled(true);
+            videoWeb.setWebChromeClient(new WebChromeClient() {
+
+            } );
+
+            videoWeb.loadData("<iframe width=\"100%\" height=\"100%\" src=\"" + selectedItemDetails.getTrailerUrl() + "\" frameborder=\"0\" allowfullscreen></iframe>", "text/html" , "utf-8" );
+
+        }
+        else {
+
+            textViewVideoWebTitle.setText("Trailer Unavailable");
+        }
 
         progressBar.setVisibility(View.GONE);
         nestedScrollView.setVisibility(View.VISIBLE);

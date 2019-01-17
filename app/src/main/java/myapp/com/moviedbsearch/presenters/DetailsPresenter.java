@@ -96,7 +96,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
             for (Results res : movieDetails.getVideos().getResults())
             {
                 if(res.getSite().equals("YouTube") && res.getType().equals("Trailer")){
-                    selectedItemDetails.setTrailerUrl("https://www.youtube.com/watch?v=" + res.getKey());
+                    selectedItemDetails.setTrailerUrl("https://www.youtube.com/embed/" + res.getKey());
                     break;
                 }
             }
@@ -123,7 +123,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
             for (Results res : tvDetails.getVideos().getResults())
             {
                 if(res.getSite().equals("YouTube") && res.getType().equals("Trailer")){
-                    selectedItemDetails.setTrailerUrl("https://www.youtube.com/watch?v=" + res.getKey());
+                    selectedItemDetails.setTrailerUrl("https://www.youtube.com/embed/" + res.getKey());
                     break;
                 }
             }
