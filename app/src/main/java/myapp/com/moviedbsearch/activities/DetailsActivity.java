@@ -1,11 +1,14 @@
 package myapp.com.moviedbsearch.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -37,6 +40,8 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     private TextView textViewSummary;
     private WebView videoWeb;
     private TextView textViewVideoWebTitle;
+    private Menu menu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +78,10 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.item_details_menu, menu);
+        this.menu = menu;
+        return true;
     }
 
     @Override
@@ -81,6 +89,9 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         switch (item.getItemId()){
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.fav_ic:
+                menu.getItem(0).setIcon(ContextCompat.getDrawable(this, R.drawable.fav_pink));
                 return true;
         }
         return super.onOptionsItemSelected(item);
