@@ -12,6 +12,7 @@ import java.util.Locale;
 
 import myapp.com.moviedbsearch.data.FavouriteItemContract;
 import myapp.com.moviedbsearch.data.FavouriteItemDbHelper;
+import myapp.com.moviedbsearch.models.SelectedItemDetails;
 
 public class Utilities {
 
@@ -21,6 +22,44 @@ public class Utilities {
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    public static boolean isWishListHasTheTargetItem(SelectedItemDetails targetItem, Context context){
+        FavouriteItemDbHelper mDbHelper = new FavouriteItemDbHelper(context);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String[] projection = {
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_ITEMID,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_TITLE,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_POSTERURL,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_SUMMARY,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_GENRE,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_RATINGS,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_RELEASEDATE,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_TRAILER,
+                FavouriteItemContract.FavouriteItemEntry.COLUMN_MEDIATYPE
+        };
+        String selection = FavouriteItemContract.FavouriteItemEntry.COLUMN_ITEMID + " = ?";
+        String[] selectionArgs = { targetItem.getId() };
+
+        Cursor cursor = db.query(
+                FavouriteItemContract.FavouriteItemEntry.TABLE_NAME,                    // The table to query
+                projection,                                                             // The columns to return
+                selection,                                                              // The columns for the WHERE clause
+                selectionArgs,                                                          // The values for the WHERE clause
+                null,                                                           // don't group the rows
+                null,                                                            // don't filter by row groups
+                null                                                             // The sort order
+        );
+
+        if(cursor.getCount() > 0){
+            cursor.close();
+            return true;
+        }
+
+        cursor.close();
+
+        return false;
     }
 
     public static boolean isWishListHasItems(Context context){

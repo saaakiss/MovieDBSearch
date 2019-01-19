@@ -5,22 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import myapp.com.moviedbsearch.data.FavouriteItemContract.FavouriteItemEntry;
-
-
-import java.util.Arrays;
-import java.util.List;
-
 import myapp.com.moviedbsearch.contracts.DetailsContract;
 import myapp.com.moviedbsearch.data.FavouriteItemContract;
 import myapp.com.moviedbsearch.data.FavouriteItemDbHelper;
 import myapp.com.moviedbsearch.models.Enums.ItemType;
 import myapp.com.moviedbsearch.models.MovieDetails.MovieDetails;
 import myapp.com.moviedbsearch.models.MovieDetails.Results;
-import myapp.com.moviedbsearch.models.SearchMulti.MultiSearchResponse;
-import myapp.com.moviedbsearch.models.SearchMulti.Result;
 import myapp.com.moviedbsearch.models.SelectedItemDetails;
 import myapp.com.moviedbsearch.models.TvDetails.TvDetails;
 import myapp.com.moviedbsearch.services.FeedApi;
+import myapp.com.moviedbsearch.utils.Utilities;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,9 +28,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
     private SelectedItemDetails selectedItemDetails;
 
     public DetailsPresenter(DetailsContract.View mView){
-
         this.mView = mView;
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(FeedApi.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -44,19 +36,17 @@ public class DetailsPresenter implements DetailsContract.Actions {
     }
 
     @Override
-    public void getResultDetails(final Result result) {
-
+    public void getResultDetails(final SelectedItemDetails selectedItemDetails) {
         FeedApi feedApi = retrofit.create(FeedApi.class);
 
-        if(result.getMedia_type().equals("movie")){
-            String movieDetailsUrl = "movie/" + result.getId() + "?api_key=" + FeedApi.API_KEY + "&append_to_response=videos";
+        if(selectedItemDetails.getItemType().equals("movie")){
+            String movieDetailsUrl = "movie/" + selectedItemDetails.getId() + "?api_key=" + FeedApi.API_KEY + "&append_to_response=videos";
             Call<MovieDetails> call = feedApi.getMovieDetails(movieDetailsUrl);
 
             call.enqueue(new Callback<MovieDetails>() {
                 @Override
                 public void onResponse(Call<MovieDetails> call, Response<MovieDetails> response) {
                     MovieDetails movieDetails = response.body();
-
                     parseMoviesDetailsResponse(movieDetails);
                 }
 
@@ -68,14 +58,13 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
         }
         else {
-            String tvDetailsUrl = "tv/" + result.getId() + "?api_key=" + FeedApi.API_KEY + "&append_to_response=videos";
+            String tvDetailsUrl = "tv/" + selectedItemDetails.getId() + "?api_key=" + FeedApi.API_KEY + "&append_to_response=videos";
             Call<TvDetails> call = feedApi.getTvDetails(tvDetailsUrl);
 
             call.enqueue(new Callback<TvDetails>() {
                 @Override
                 public void onResponse(Call<TvDetails> call, Response<TvDetails> response) {
                     TvDetails tvDetails = response.body();
-
                     parseTvDetailsResponse(tvDetails);
                 }
 
@@ -90,7 +79,6 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
 
     private void parseMoviesDetailsResponse(MovieDetails movieDetails){
-
         selectedItemDetails = new SelectedItemDetails();
 
         if(movieDetails.getPoster_path() != null && !movieDetails.getPoster_path().isEmpty()){
@@ -99,6 +87,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
         else {
             selectedItemDetails.setImage(null);
         }
+
         selectedItemDetails.setTitle(movieDetails.getTitle());
         String summary = movieDetails.getOverview() != null && !movieDetails.getOverview().trim().isEmpty() ? movieDetails.getOverview() : "N/A";
         selectedItemDetails.setSummary(summary);
@@ -124,7 +113,6 @@ public class DetailsPresenter implements DetailsContract.Actions {
     }
 
     private void parseTvDetailsResponse(TvDetails tvDetails){
-
         selectedItemDetails = new SelectedItemDetails();
 
         if(tvDetails.getPoster_path() != null && !tvDetails.getPoster_path().isEmpty()){
@@ -133,6 +121,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
         else {
             selectedItemDetails.setImage(null);
         }
+
         selectedItemDetails.setTitle(tvDetails.getName());
         String summary = tvDetails.getOverview() != null && !tvDetails.getOverview().trim().isEmpty() ? tvDetails.getOverview() : "N/A";
         selectedItemDetails.setSummary(summary);
@@ -158,43 +147,15 @@ public class DetailsPresenter implements DetailsContract.Actions {
     }
 
     @Override
-    public void addItemToWishListIfNotExist(Context context){
-        FavouriteItemDbHelper mDbHelper = new FavouriteItemDbHelper(context);
+    public void addItemToWishList(Context context){
 
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        String[] projection = {
-                FavouriteItemEntry.COLUMN_ITEMID,
-                FavouriteItemEntry.COLUMN_TITLE,
-                FavouriteItemEntry.COLUMN_POSTERURL,
-                FavouriteItemEntry.COLUMN_SUMMARY,
-                FavouriteItemEntry.COLUMN_GENRE,
-                FavouriteItemEntry.COLUMN_RATINGS,
-                FavouriteItemEntry.COLUMN_RELEASEDATE,
-                FavouriteItemEntry.COLUMN_TRAILER,
-                FavouriteItemEntry.COLUMN_MEDIATYPE
-        };
-
-        String selection = FavouriteItemContract.FavouriteItemEntry.COLUMN_ITEMID + " = ?";
-        String[] selectionArgs = { selectedItemDetails.getId() };
-
-        Cursor cursor = db.query(
-                FavouriteItemContract.FavouriteItemEntry.TABLE_NAME,                    // The table to query
-                projection,                                                             // The columns to return
-                selection,                                                              // The columns for the WHERE clause
-                selectionArgs,                                                          // The values for the WHERE clause
-                null,                                                           // don't group the rows
-                null,                                                            // don't filter by row groups
-                null                                                             // The sort order
-        );
-
-        if(cursor.getCount() > 0){
-            cursor.close();
+        if(Utilities.isWishListHasTheTargetItem(selectedItemDetails, context)){
             mView.notifyAboutQueryResult("item has already been added in wishlist");
             return;
         }
 
-        cursor.close();
+        FavouriteItemDbHelper mDbHelper = new FavouriteItemDbHelper(context);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(FavouriteItemEntry.COLUMN_ITEMID, selectedItemDetails.getId());
@@ -210,7 +171,5 @@ public class DetailsPresenter implements DetailsContract.Actions {
         long newRowId = db.insert(FavouriteItemEntry.TABLE_NAME, null, values);
 
         mView.notifyAboutQueryResult("item has been successfully added in wishlist");
-
-
     }
 }

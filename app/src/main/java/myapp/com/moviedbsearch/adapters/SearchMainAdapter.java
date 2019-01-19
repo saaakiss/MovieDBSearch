@@ -16,25 +16,21 @@ import java.util.List;
 
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
-import myapp.com.moviedbsearch.models.SearchMulti.Result;
+import myapp.com.moviedbsearch.models.SelectedItemDetails;
 import myapp.com.moviedbsearch.utils.Utilities;
 
 public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
-
     private Context context;
-    private List<Result> results;
+    private List<SelectedItemDetails> selectedItemsDetails;
     private RecyclerClickListener recyclerClickListener;
-
     private boolean isLoadingAdded = false;
 
-
-
-    public SearchMainAdapter(Context context, List<Result> results, RecyclerClickListener recyclerClickListener){
+    public SearchMainAdapter(Context context, List<SelectedItemDetails> selectedItemsDetails, RecyclerClickListener recyclerClickListener){
         this.context = context;
-        this.results = results;
+        this.selectedItemsDetails = selectedItemsDetails;
         this.recyclerClickListener = recyclerClickListener;
     }
 
@@ -72,36 +68,24 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 SearchMainHolder searchMainHolder = (SearchMainHolder) holder;
 
                 String releaseDate;
-                if(results.get(position).getMedia_type().equals("movie")){
-                    releaseDate = results.get(position).getRelease_date() != null ? Utilities.formatDate(results.get(position).getRelease_date()) : "N/A";
-                }else{
-                    releaseDate = results.get(position).getFirst_air_date() != null ? Utilities.formatDate(results.get(position).getFirst_air_date()) : "N/A";
-                }
+                releaseDate = selectedItemsDetails.get(position).getRelease_date() != null ? Utilities.formatDate(selectedItemsDetails.get(position).getRelease_date()) : "N/A";
+                searchMainHolder.txtViewReleaseDate.setText("Release Date: " + releaseDate);
 
                 String title;
-                if(results.get(position).getMedia_type().equals("movie")){
-                    title = results.get(position).getTitle() != null ? results.get(position).getTitle() : "N/A";
-                }else{
-                    title = results.get(position).getName() != null ? results.get(position).getName() : "N/A";
-                }
-
+                title = selectedItemsDetails.get(position).getTitle() != null ? selectedItemsDetails.get(position).getTitle() : "N/A";
                 searchMainHolder.txtViewTitle.setText(title);
 
-                searchMainHolder.txtViewReleaseDate.setText("Relase Date: " + releaseDate);
-                searchMainHolder.txtViewRatings.setText("Rating: " + results.get(position).getVote_average());
+                searchMainHolder.txtViewRatings.setText("Rating: " + selectedItemsDetails.get(position).getRatings());
+                searchMainHolder.txtViewMediaType.setText(selectedItemsDetails.get(position).getItemType());
 
-                searchMainHolder.txtViewMediaType.setText(results.get(position).getMedia_type());
-
-                if(results.get(position).getPoster_path() != null && !results.get(position).getPoster_path().trim().isEmpty()){
+                if(selectedItemsDetails.get(position).getImage() != null && !selectedItemsDetails.get(position).getImage().trim().isEmpty()){
                     RequestOptions requestOptions = new RequestOptions();
                     requestOptions.error(R.drawable.ic_placeholder);
-                    Glide.with(context).load("https://image.tmdb.org/t/p/original" + results.get(position).getPoster_path()).apply(requestOptions).into(searchMainHolder.ivLogo);
+                    Glide.with(context).load("https://image.tmdb.org/t/p/original" + selectedItemsDetails.get(position).getImage()).apply(requestOptions).into(searchMainHolder.ivLogo);
                 }
                 else {
                     Glide.with(context).load(R.drawable.ic_placeholder).into(searchMainHolder.ivLogo);
                 }
-
-
 
                 break;
             case LOADING:
@@ -112,12 +96,12 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return results == null ? 0 : results.size();
+        return selectedItemsDetails == null ? 0 : selectedItemsDetails.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == results.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == selectedItemsDetails.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
     public class SearchMainHolder extends RecyclerView.ViewHolder{
@@ -127,8 +111,6 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView txtViewRatings;
         ImageView ivLogo;
         TextView txtViewMediaType;
-
-
 
         public SearchMainHolder(@NonNull View itemView) {
             super(itemView);
@@ -142,7 +124,7 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    recyclerClickListener.onItemClicked(results.get(getLayoutPosition()));
+                    recyclerClickListener.onItemClicked(selectedItemsDetails.get(getLayoutPosition()));
                 }
             });
 
@@ -161,32 +143,32 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new Result());
+        add(new SelectedItemDetails());
     }
 
-    public void add(Result mc) {
-        results.add(mc);
-        notifyItemInserted(results.size() - 1);
+    public void add(SelectedItemDetails mc) {
+        selectedItemsDetails.add(mc);
+        notifyItemInserted(selectedItemsDetails.size() - 1);
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
-        int position = results.size() - 1;
-        Result item = getItem(position);
+        int position = selectedItemsDetails.size() - 1;
+        SelectedItemDetails item = getItem(position);
 
         if (item != null) {
-            results.remove(position);
+            selectedItemsDetails.remove(position);
             notifyItemRemoved(position);
         }
     }
 
-    public Result getItem(int position) {
-        return results.get(position);
+    public SelectedItemDetails getItem(int position) {
+        return selectedItemsDetails.get(position);
     }
 
-    public void addAll(List<Result> mcList) {
-        for (Result mc : mcList) {
+    public void addAll(List<SelectedItemDetails> mcList) {
+        for (SelectedItemDetails mc : mcList) {
             add(mc);
         }
     }

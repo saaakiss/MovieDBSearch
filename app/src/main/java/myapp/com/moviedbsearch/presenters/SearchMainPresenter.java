@@ -7,6 +7,7 @@ import java.util.List;
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
 import myapp.com.moviedbsearch.models.SearchMulti.MultiSearchResponse;
 import myapp.com.moviedbsearch.models.SearchMulti.Result;
+import myapp.com.moviedbsearch.models.SelectedItemDetails;
 import myapp.com.moviedbsearch.services.FeedApi;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,7 +21,6 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
     private Retrofit retrofit;
 
     public SearchMainPresenter(SearchMainContract.View mView){
-
         this.mView = mView;
         retrofit = new Retrofit.Builder()
                 .baseUrl(FeedApi.BASE_URL)
@@ -29,12 +29,9 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
     }
 
     @Override
-    public void getMoviewTvShows(String query) {
-
+    public void getMoviesTvShows(String query) {
         FeedApi feedApi = retrofit.create(FeedApi.class);
-
         Call<MultiSearchResponse> call = feedApi.getMoviesTvShows(FeedApi.API_KEY, query);
-
         call.enqueue(new Callback<MultiSearchResponse>() {
             @Override
             public void onResponse(Call<MultiSearchResponse> call, Response<MultiSearchResponse> response) {
@@ -52,12 +49,9 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
     }
 
     @Override
-    public void getMoreMoviewTvSHows(String query, int page) {
-
+    public void getMoreMoviesTvShows(String query, int page) {
         FeedApi feedApi = retrofit.create(FeedApi.class);
-
         Call<MultiSearchResponse> call = feedApi.getMoreMoviesTvShows(FeedApi.API_KEY, query, page);
-
         call.enqueue(new Callback<MultiSearchResponse>() {
             @Override
             public void onResponse(Call<MultiSearchResponse> call, Response<MultiSearchResponse> response) {
@@ -74,30 +68,39 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
 
     @Override
     public void filterResults(List<Result> resultsResponse, int totalPages) {
-
-        List<Result> filteredResults = new ArrayList<>();
-
-        for (Result res : resultsResponse) {
-            if(res.getMedia_type().equals("movie") || res.getMedia_type().equals("tv")){
-                filteredResults.add(res);
-            }
-        }
-
-        mView.showMoviesTvShows(filteredResults, totalPages);
-
+        List<SelectedItemDetails> selectedItemsDetails = convertToSelectedItemDetailsLIst(resultsResponse);
+        mView.showMoviesTvShows(selectedItemsDetails, totalPages);
     }
 
     @Override
     public void filterMoreResults(List<Result> resultsResponse) {
-        List<Result> filteredResults = new ArrayList<>();
+        List<SelectedItemDetails> selectedItemsDetails = convertToSelectedItemDetailsLIst(resultsResponse);
+        mView.showMoreMoviesTvShows(selectedItemsDetails);
+    }
 
+    private List<SelectedItemDetails> convertToSelectedItemDetailsLIst(List<Result> resultsResponse){
+        List<SelectedItemDetails> filteredItemsDetails = new ArrayList<>();
         for (Result res : resultsResponse) {
             if(res.getMedia_type().equals("movie") || res.getMedia_type().equals("tv")){
-                filteredResults.add(res);
+                SelectedItemDetails item = new SelectedItemDetails();
+                if(res.getMedia_type().equals("movie")){
+                    item.setRelease_date(res.getRelease_date());
+                    item.setTitle(res.getTitle());
+                }
+                else {
+                    item.setRelease_date(res.getFirst_air_date());
+                    item.setTitle(res.getName());
+                }
+                item.setRatings(res.getVote_average());
+                item.setItemType(res.getMedia_type());
+                item.setImage(res.getPoster_path());
+                item.setId(res.getId());
+
+                filteredItemsDetails.add(item);
             }
         }
 
-        mView.showMoreMoviesTvShows(filteredResults);
+        return filteredItemsDetails;
     }
 
 

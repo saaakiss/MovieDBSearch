@@ -1,8 +1,6 @@
 package myapp.com.moviedbsearch.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,10 +19,8 @@ import java.util.List;
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.adapters.SearchMainAdapter;
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
-import myapp.com.moviedbsearch.data.FavouriteItemContract;
-import myapp.com.moviedbsearch.data.FavouriteItemDbHelper;
 import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
-import myapp.com.moviedbsearch.models.SearchMulti.Result;
+import myapp.com.moviedbsearch.models.SelectedItemDetails;
 import myapp.com.moviedbsearch.presenters.SearchMainPresenter;
 import myapp.com.moviedbsearch.utils.PaginationScrollListener;
 import myapp.com.moviedbsearch.utils.Utilities;
@@ -37,15 +33,13 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private Menu menu;
-
     private static final int PAGE_START = 1;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int TOTAL_PAGES = 1;
     private int currentPage = PAGE_START;
     private String mQuery;
-
-    private static final String RESULT = "result";
+    private static final String SELECTEDITEM = "sel_tem";
 
 
     @Override
@@ -53,14 +47,11 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.rv_movies_tvShows);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
+        recyclerView = findViewById(R.id.rv_movies_tvShows);
+        progressBar = findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.GONE);
 
-
         searchMainPresenter = new SearchMainPresenter(this);
-
     }
 
     @Override
@@ -93,7 +84,6 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
-
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -102,7 +92,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
                 initVariables();
                 mQuery  = query;
                 progressBar.setVisibility(View.VISIBLE);
-                searchMainPresenter.getMoviewTvShows(query);
+                searchMainPresenter.getMoviesTvShows(query);
                 return false;
             }
 
@@ -120,17 +110,15 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         switch (item.getItemId()) {
             case R.id.action_wishList:
                 return true;
-
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void showMoviesTvShows(List<Result> filteredResults, int totalPages) {
-
+    public void showMoviesTvShows(List<SelectedItemDetails> selectedItemsDetails, int totalPages) {
         TOTAL_PAGES = totalPages;
 
-        searchMainAdapter = new SearchMainAdapter(getApplicationContext(), filteredResults, this);
+        searchMainAdapter = new SearchMainAdapter(getApplicationContext(), selectedItemsDetails, this);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -141,7 +129,6 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
             protected void loadMoreItems() {
                 isLoading = true;
                 currentPage += 1;
-
                 loadNextPage();
             }
 
@@ -173,20 +160,14 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     }
 
     private void loadNextPage(){
-        searchMainPresenter.getMoreMoviewTvSHows(mQuery, currentPage);
-
-
+        searchMainPresenter.getMoreMoviesTvShows(mQuery, currentPage);
     }
 
     @Override
-    public void showMoreMoviesTvShows(List<Result> moreFilteredResults) {
-
+    public void showMoreMoviesTvShows(List<SelectedItemDetails> selectedItemsDetails) {
         searchMainAdapter.removeLoadingFooter();
         isLoading = false;
-
-
-        searchMainAdapter.addAll(moreFilteredResults);
-
+        searchMainAdapter.addAll(selectedItemsDetails);
 
         if (currentPage != TOTAL_PAGES) {
             searchMainAdapter.addLoadingFooter();
@@ -195,10 +176,9 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
             isLastPage = true;
         }
 
-        if(moreFilteredResults.size() == 0 && !isLastPage){
+        if(selectedItemsDetails.size() == 0 && !isLastPage){
             isLoading = true;
             currentPage += 1;
-
             loadNextPage();
         }
         else if(isLastPage){
@@ -207,10 +187,10 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     }
 
     @Override
-    public void onItemClicked(Object result)
+    public void onItemClicked(Object selectedItem)
     {
         Intent resultIntent = new Intent(this, DetailsActivity.class);
-        resultIntent.putExtra(RESULT, (Result)result);
+        resultIntent.putExtra(SELECTEDITEM, (SelectedItemDetails)selectedItem);
         startActivity(resultIntent);
     }
 

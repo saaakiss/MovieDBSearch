@@ -1,6 +1,8 @@
 package myapp.com.moviedbsearch.models;
 
-public class SelectedItemDetails {
+import java.io.Serializable;
+
+public class SelectedItemDetails implements Serializable {
 
     private String image;
 

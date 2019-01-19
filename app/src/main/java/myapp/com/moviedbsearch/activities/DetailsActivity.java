@@ -1,7 +1,6 @@
 package myapp.com.moviedbsearch.activities;
 
 import android.content.Intent;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,14 +21,12 @@ import com.bumptech.glide.request.RequestOptions;
 
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.contracts.DetailsContract;
-import myapp.com.moviedbsearch.models.SearchMulti.Result;
 import myapp.com.moviedbsearch.models.SelectedItemDetails;
 import myapp.com.moviedbsearch.presenters.DetailsPresenter;
 
 public class DetailsActivity extends AppCompatActivity implements DetailsContract.View {
 
-    private static final String RESULT = "result";
-
+    private static final String SELECTEDITEM = "sel_tem";
     private DetailsContract.Actions mPresenter;
     private ProgressBar progressBar;
     private NestedScrollView nestedScrollView;
@@ -41,7 +38,6 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     private TextView textViewVideoWebTitle;
     private Menu menu;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +45,6 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
         nestedScrollView = findViewById(R.id.detailsLayout);
         nestedScrollView.setVisibility(View.GONE);
-
         progressBar = findViewById(R.id.progress_bar);
         imageView = findViewById(R.id.imageview_item);
         textViewTitle = findViewById(R.id.movie_title);
@@ -57,22 +52,17 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         textViewSummary = findViewById(R.id.tv_summary);
         videoWeb = findViewById(R.id.videoWebView);
         textViewVideoWebTitle = findViewById(R.id.videoWebViewTitle);
-
         videoWeb.setVisibility(View.GONE);
 
         Intent intent = getIntent();
-        Result result = (Result) intent.getSerializableExtra(RESULT);
-
+        SelectedItemDetails result = (SelectedItemDetails) intent.getSerializableExtra(SELECTEDITEM);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        setTitle(result.getMedia_type() + " details");
+        setTitle(result.getItemType() + " details");
 
         mPresenter = new DetailsPresenter(this);
-
         mPresenter.getResultDetails(result);
-
     }
 
     @Override
@@ -90,7 +80,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
                 onBackPressed();
                 return true;
             case R.id.fav_ic:
-                mPresenter.addItemToWishListIfNotExist(this);
+                mPresenter.addItemToWishList(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -107,26 +97,20 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
             Glide.with(getApplicationContext()).load(R.drawable.ic_placeholder).into(imageView);
         }
 
-
         textViewTitle.setText(selectedItemDetails.getTitle());
         textViewGenre.setText("Genre: " + selectedItemDetails.getGenre());
         textViewSummary.setText(selectedItemDetails.getSummary());
 
         if(selectedItemDetails.getTrailerUrl() != null){
-
             textViewVideoWebTitle.setText("Watch Trailer");
             videoWeb.setVisibility(View.VISIBLE);
 
             videoWeb.getSettings().setJavaScriptEnabled(true);
             videoWeb.setWebChromeClient(new WebChromeClient() {
-
             } );
-
             videoWeb.loadData("<iframe width=\"100%\" height=\"100%\" src=\"" + selectedItemDetails.getTrailerUrl() + "\" frameborder=\"0\" allowfullscreen></iframe>", "text/html" , "utf-8" );
-
         }
         else {
-
             textViewVideoWebTitle.setText("Trailer Unavailable");
         }
 
@@ -136,8 +120,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
     @Override
     public void notifyAboutQueryResult(String message) {
-
-            Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
     }
 
     @Override

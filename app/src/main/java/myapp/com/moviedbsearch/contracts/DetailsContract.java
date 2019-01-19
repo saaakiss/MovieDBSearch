@@ -15,7 +15,7 @@ public class DetailsContract {
     }
 
     public interface Actions{
-        void getResultDetails(Result result);
-        void addItemToWishListIfNotExist(Context context);
+        void getResultDetails(SelectedItemDetails selectedItemDetails);
+        void addItemToWishList(Context context);
     }
 }
