@@ -1,9 +1,17 @@
 package myapp.com.moviedbsearch.presenters;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import myapp.com.moviedbsearch.data.FavouriteItemContract.FavouriteItemEntry;
+
+
 import java.util.Arrays;
 import java.util.List;
 
 import myapp.com.moviedbsearch.contracts.DetailsContract;
+import myapp.com.moviedbsearch.data.FavouriteItemContract;
+import myapp.com.moviedbsearch.data.FavouriteItemDbHelper;
 import myapp.com.moviedbsearch.models.Enums.ItemType;
 import myapp.com.moviedbsearch.models.MovieDetails.MovieDetails;
 import myapp.com.moviedbsearch.models.MovieDetails.Results;
@@ -22,6 +30,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
     private DetailsContract.View mView;
     private Retrofit retrofit;
+    private SelectedItemDetails selectedItemDetails;
 
     public DetailsPresenter(DetailsContract.View mView){
 
@@ -34,7 +43,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
     }
 
     @Override
-    public void getResultDetails(Result result) {
+    public void getResultDetails(final Result result) {
 
         FeedApi feedApi = retrofit.create(FeedApi.class);
 
@@ -81,7 +90,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
     private void parseMoviesDetailsResponse(MovieDetails movieDetails){
 
-        SelectedItemDetails selectedItemDetails = new SelectedItemDetails();
+        selectedItemDetails = new SelectedItemDetails();
 
         if(movieDetails.getPoster_path() != null && !movieDetails.getPoster_path().isEmpty()){
             selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + movieDetails.getPoster_path());
@@ -96,6 +105,8 @@ public class DetailsPresenter implements DetailsContract.Actions {
         selectedItemDetails.setGenre(genre);
         selectedItemDetails.setId(movieDetails.getId());
         selectedItemDetails.setItemType(ItemType.MOVIE.toString());
+        selectedItemDetails.setRelease_date(movieDetails.getRelease_date());
+        selectedItemDetails.setRatings(movieDetails.getVote_average());
 
         if(movieDetails.getVideos() != null && movieDetails.getVideos().getResults() != null){
             for (Results res : movieDetails.getVideos().getResults())
@@ -113,7 +124,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
     private void parseTvDetailsResponse(TvDetails tvDetails){
 
-        SelectedItemDetails selectedItemDetails = new SelectedItemDetails();
+        selectedItemDetails = new SelectedItemDetails();
 
         if(tvDetails.getPoster_path() != null && !tvDetails.getPoster_path().isEmpty()){
             selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + tvDetails.getPoster_path());
@@ -128,6 +139,8 @@ public class DetailsPresenter implements DetailsContract.Actions {
         selectedItemDetails.setGenre(genre);
         selectedItemDetails.setId(tvDetails.getId());
         selectedItemDetails.setItemType(ItemType.TV.toString());
+        selectedItemDetails.setRelease_date(tvDetails.getFirst_air_date());
+        selectedItemDetails.setRatings(tvDetails.getVote_average());
 
         if(tvDetails.getVideos() != null && tvDetails.getVideos().getResults() != null){
             for (Results res : tvDetails.getVideos().getResults())
@@ -141,5 +154,26 @@ public class DetailsPresenter implements DetailsContract.Actions {
         }
 
         mView.showResultDetails(selectedItemDetails);
+    }
+
+    @Override
+    public void checkIfItemExistsAndAddToWishList(Context context){
+        FavouriteItemDbHelper mDbHelper = new FavouriteItemDbHelper(context);
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(FavouriteItemEntry.COLUMN_ITEMID, selectedItemDetails.getId());
+        values.put(FavouriteItemEntry.COLUMN_TITLE, selectedItemDetails.getTitle());
+        values.put(FavouriteItemEntry.COLUMN_POSTERURL, selectedItemDetails.getImage());
+        values.put(FavouriteItemEntry.COLUMN_SUMMARY, selectedItemDetails.getSummary());
+        values.put(FavouriteItemEntry.COLUMN_GENRE, selectedItemDetails.getGenre());
+        values.put(FavouriteItemEntry.COLUMN_RATINGS, selectedItemDetails.getRatings());
+        values.put(FavouriteItemEntry.COLUMN_RELEASEDATE, selectedItemDetails.getRelease_date());
+        values.put(FavouriteItemEntry.COLUMN_TRAILER, selectedItemDetails.getTrailerUrl());
+        values.put(FavouriteItemEntry.COLUMN_MEDIATYPE, selectedItemDetails.getItemType());
+
+        long newRowId = db.insert(FavouriteItemEntry.TABLE_NAME, null, values);
+
     }
 }

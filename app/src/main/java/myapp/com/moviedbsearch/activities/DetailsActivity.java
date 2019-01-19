@@ -1,7 +1,6 @@
 package myapp.com.moviedbsearch.activities;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -92,6 +90,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
                 return true;
             case R.id.fav_ic:
                 menu.getItem(0).setIcon(ContextCompat.getDrawable(this, R.drawable.fav_pink));
+                mPresenter.checkIfItemExistsAndAddToWishList(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -99,7 +98,6 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
     @Override
     public void showResultDetails(SelectedItemDetails selectedItemDetails) {
-
         if(selectedItemDetails.getImage() != null){
             RequestOptions requestOptions = new RequestOptions();
             requestOptions.error(R.drawable.ic_placeholder);

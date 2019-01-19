@@ -6,6 +6,10 @@ public class SelectedItemDetails {
 
     private String title;
 
+    private String release_date;
+
+    private String ratings;
+
     private String summary;
 
     private String genre;
@@ -15,6 +19,22 @@ public class SelectedItemDetails {
     private String ItemType;
 
     private String TrailerUrl;
+
+    public String getRelease_date() {
+        return release_date;
+    }
+
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
+    }
+
+    public String getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(String ratings) {
+        this.ratings = ratings;
+    }
 
     public String getImage() {
         return image;
