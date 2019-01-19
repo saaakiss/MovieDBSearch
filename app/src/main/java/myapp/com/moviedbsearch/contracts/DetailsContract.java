@@ -9,12 +9,13 @@ public class DetailsContract {
 
     public interface View{
         void showResultDetails(SelectedItemDetails selectedItemDetails);
+        void notifyAboutQueryResult(String message);
         void showError();
 
     }
 
     public interface Actions{
         void getResultDetails(Result result);
-        void checkIfItemExistsAndAddToWishList(Context context);
+        void addItemToWishListIfNotExist(Context context);
     }
 }

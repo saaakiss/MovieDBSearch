@@ -15,6 +15,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -89,8 +90,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
                 onBackPressed();
                 return true;
             case R.id.fav_ic:
-                menu.getItem(0).setIcon(ContextCompat.getDrawable(this, R.drawable.fav_pink));
-                mPresenter.checkIfItemExistsAndAddToWishList(this);
+                mPresenter.addItemToWishListIfNotExist(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -132,6 +132,12 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
         progressBar.setVisibility(View.GONE);
         nestedScrollView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void notifyAboutQueryResult(String message) {
+
+            Toast.makeText(this, message , Toast.LENGTH_SHORT).show();
     }
 
     @Override

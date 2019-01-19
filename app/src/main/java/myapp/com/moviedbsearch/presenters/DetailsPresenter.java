@@ -2,6 +2,7 @@ package myapp.com.moviedbsearch.presenters;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import myapp.com.moviedbsearch.data.FavouriteItemContract.FavouriteItemEntry;
 
@@ -157,10 +158,43 @@ public class DetailsPresenter implements DetailsContract.Actions {
     }
 
     @Override
-    public void checkIfItemExistsAndAddToWishList(Context context){
+    public void addItemToWishListIfNotExist(Context context){
         FavouriteItemDbHelper mDbHelper = new FavouriteItemDbHelper(context);
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String[] projection = {
+                FavouriteItemEntry.COLUMN_ITEMID,
+                FavouriteItemEntry.COLUMN_TITLE,
+                FavouriteItemEntry.COLUMN_POSTERURL,
+                FavouriteItemEntry.COLUMN_SUMMARY,
+                FavouriteItemEntry.COLUMN_GENRE,
+                FavouriteItemEntry.COLUMN_RATINGS,
+                FavouriteItemEntry.COLUMN_RELEASEDATE,
+                FavouriteItemEntry.COLUMN_TRAILER,
+                FavouriteItemEntry.COLUMN_MEDIATYPE
+        };
+
+        String selection = FavouriteItemContract.FavouriteItemEntry.COLUMN_ITEMID + " = ?";
+        String[] selectionArgs = { selectedItemDetails.getId() };
+
+        Cursor cursor = db.query(
+                FavouriteItemContract.FavouriteItemEntry.TABLE_NAME,                    // The table to query
+                projection,                                                             // The columns to return
+                selection,                                                              // The columns for the WHERE clause
+                selectionArgs,                                                          // The values for the WHERE clause
+                null,                                                           // don't group the rows
+                null,                                                            // don't filter by row groups
+                null                                                             // The sort order
+        );
+
+        if(cursor.getCount() > 0){
+            cursor.close();
+            mView.notifyAboutQueryResult("item has already been added in wishlist");
+            return;
+        }
+
+        cursor.close();
 
         ContentValues values = new ContentValues();
         values.put(FavouriteItemEntry.COLUMN_ITEMID, selectedItemDetails.getId());
@@ -174,6 +208,9 @@ public class DetailsPresenter implements DetailsContract.Actions {
         values.put(FavouriteItemEntry.COLUMN_MEDIATYPE, selectedItemDetails.getItemType());
 
         long newRowId = db.insert(FavouriteItemEntry.TABLE_NAME, null, values);
+
+        mView.notifyAboutQueryResult("item has been successfully added in wishlist");
+
 
     }
 }
