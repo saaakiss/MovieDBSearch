@@ -83,7 +83,12 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
         SelectedItemDetails selectedItemDetails = new SelectedItemDetails();
 
-        selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + movieDetails.getPoster_path());
+        if(movieDetails.getPoster_path() != null && !movieDetails.getPoster_path().isEmpty()){
+            selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + movieDetails.getPoster_path());
+        }
+        else {
+            selectedItemDetails.setImage(null);
+        }
         selectedItemDetails.setTitle(movieDetails.getTitle());
         String summary = movieDetails.getOverview() != null && !movieDetails.getOverview().trim().isEmpty() ? movieDetails.getOverview() : "N/A";
         selectedItemDetails.setSummary(summary);
@@ -110,7 +115,12 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
         SelectedItemDetails selectedItemDetails = new SelectedItemDetails();
 
-        selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + tvDetails.getPoster_path());
+        if(tvDetails.getPoster_path() != null && !tvDetails.getPoster_path().isEmpty()){
+            selectedItemDetails.setImage("https://image.tmdb.org/t/p/original" + tvDetails.getPoster_path());
+        }
+        else {
+            selectedItemDetails.setImage(null);
+        }
         selectedItemDetails.setTitle(tvDetails.getName());
         String summary = tvDetails.getOverview() != null && !tvDetails.getOverview().trim().isEmpty() ? tvDetails.getOverview() : "N/A";
         selectedItemDetails.setSummary(summary);

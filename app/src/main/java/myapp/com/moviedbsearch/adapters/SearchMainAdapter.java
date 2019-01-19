@@ -69,16 +69,38 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         switch (getItemViewType(position)) {
             case ITEM:
                 SearchMainHolder searchMainHolder = (SearchMainHolder) holder;
-                String releaseDate = results.get(position).getFirst_air_date() != null ? results.get(position).getFirst_air_date() : "N/A";
 
-                searchMainHolder.txtViewTitle.setText(results.get(position).getName() != null ? results.get(position).getName() : "N/A");
+                String releaseDate;
+                if(results.get(position).getMedia_type().equals("movie")){
+                    releaseDate = results.get(position).getRelease_date() != null ? results.get(position).getRelease_date() : "N/A";
+                }else{
+                    releaseDate = results.get(position).getFirst_air_date() != null ? results.get(position).getFirst_air_date() : "N/A";
+                }
+
+                String title;
+                if(results.get(position).getMedia_type().equals("movie")){
+                    title = results.get(position).getTitle() != null ? results.get(position).getTitle() : "N/A";
+                }else{
+                    title = results.get(position).getName() != null ? results.get(position).getName() : "N/A";
+                }
+
+                searchMainHolder.txtViewTitle.setText(title);
+
                 searchMainHolder.txtViewReleaseDate.setText("Relase Date: " + releaseDate);
                 searchMainHolder.txtViewRatings.setText("Rating: " + results.get(position).getVote_average());
 
-                RequestOptions requestOptions = new RequestOptions();
-                requestOptions.error(R.drawable.ic_placeholder);
+                searchMainHolder.txtViewMediaType.setText(results.get(position).getMedia_type());
 
-                Glide.with(context).load("https://image.tmdb.org/t/p/original" + results.get(position).getPoster_path()).apply(requestOptions).into(searchMainHolder.ivLogo);
+                if(results.get(position).getPoster_path() != null && !results.get(position).getPoster_path().trim().isEmpty()){
+                    RequestOptions requestOptions = new RequestOptions();
+                    requestOptions.error(R.drawable.ic_placeholder);
+                    Glide.with(context).load("https://image.tmdb.org/t/p/original" + results.get(position).getPoster_path()).apply(requestOptions).into(searchMainHolder.ivLogo);
+                }
+                else {
+                    Glide.with(context).load(R.drawable.ic_placeholder).into(searchMainHolder.ivLogo);
+                }
+
+
 
                 break;
             case LOADING:
@@ -103,6 +125,7 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView txtViewReleaseDate;
         TextView txtViewRatings;
         ImageView ivLogo;
+        TextView txtViewMediaType;
 
 
 
@@ -113,6 +136,7 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             txtViewReleaseDate = itemView.findViewById(R.id.tv_release_date);
             txtViewRatings = itemView.findViewById(R.id.tv_ratings);
             ivLogo = itemView.findViewById(R.id.logo);
+            txtViewMediaType = itemView.findViewById(R.id.tv_media_type);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

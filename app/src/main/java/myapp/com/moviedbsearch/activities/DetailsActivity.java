@@ -68,7 +68,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        setTitle("Movie Details");
+        setTitle(result.getMedia_type() + " details");
 
         mPresenter = new DetailsPresenter(this);
 
@@ -100,10 +100,15 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     @Override
     public void showResultDetails(SelectedItemDetails selectedItemDetails) {
 
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.error(R.drawable.ic_placeholder);
+        if(selectedItemDetails.getImage() != null){
+            RequestOptions requestOptions = new RequestOptions();
+            requestOptions.error(R.drawable.ic_placeholder);
+            Glide.with(getApplicationContext()).load(selectedItemDetails.getImage()).apply(requestOptions).into(imageView);
+        }
+        else {
+            Glide.with(getApplicationContext()).load(R.drawable.ic_placeholder).into(imageView);
+        }
 
-        Glide.with(this).load(selectedItemDetails.getImage()).apply(requestOptions).into(imageView);
 
         textViewTitle.setText(selectedItemDetails.getTitle());
         textViewGenre.setText("Genre: " + selectedItemDetails.getGenre());

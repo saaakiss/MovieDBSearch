@@ -108,7 +108,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
 
         TOTAL_PAGES = totalPages;
 
-        searchMainAdapter = new SearchMainAdapter(this, filteredResults, this);
+        searchMainAdapter = new SearchMainAdapter(getApplicationContext(), filteredResults, this);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -35,6 +35,9 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:textSize="18sp"
+                android:maxLines = "3"
+                android:ellipsize="end"
+                android:minLines="1"
                 android:textStyle="bold"/>
 
             <TextView
@@ -46,6 +49,17 @@
                 android:id="@+id/tv_ratings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_media_type"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:gravity="bottom"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="4dp"
+                android:textStyle="italic"
+                android:textColor="#d3d3d3"/>
 
         </LinearLayout>
 
