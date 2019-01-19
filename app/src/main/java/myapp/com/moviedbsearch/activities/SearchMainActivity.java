@@ -1,6 +1,8 @@
 package myapp.com.moviedbsearch.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -19,10 +21,13 @@ import java.util.List;
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.adapters.SearchMainAdapter;
 import myapp.com.moviedbsearch.contracts.SearchMainContract;
+import myapp.com.moviedbsearch.data.FavouriteItemContract;
+import myapp.com.moviedbsearch.data.FavouriteItemDbHelper;
 import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
 import myapp.com.moviedbsearch.models.SearchMulti.Result;
 import myapp.com.moviedbsearch.presenters.SearchMainPresenter;
 import myapp.com.moviedbsearch.utils.PaginationScrollListener;
+import myapp.com.moviedbsearch.utils.Utilities;
 
 public class SearchMainActivity extends AppCompatActivity implements SearchMainContract.View, RecyclerClickListener {
 
@@ -31,6 +36,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
+    private Menu menu;
 
     private static final int PAGE_START = 1;
     private boolean isLoading = false;
@@ -54,6 +60,17 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
 
 
         searchMainPresenter = new SearchMainPresenter(this);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(menu != null && Utilities.isWishListHasItems(this)){
+            MenuItem wishListItem = menu.findItem(R.id.action_wishList);
+            wishListItem.setVisible(true);
+        }
     }
 
     private void initVariables(){
@@ -67,6 +84,12 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_menu, menu);
+        this.menu = menu;
+
+        if(Utilities.isWishListHasItems(this)){
+            MenuItem wishListItem = menu.findItem(R.id.action_wishList);
+            wishListItem.setVisible(true);
+        }
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -97,10 +120,9 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         switch (item.getItemId()) {
             case R.id.action_wishList:
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
 
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

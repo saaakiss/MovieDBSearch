@@ -17,6 +17,7 @@ import java.util.List;
 import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.interfaces.RecyclerClickListener;
 import myapp.com.moviedbsearch.models.SearchMulti.Result;
+import myapp.com.moviedbsearch.utils.Utilities;
 
 public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -72,9 +73,9 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                 String releaseDate;
                 if(results.get(position).getMedia_type().equals("movie")){
-                    releaseDate = results.get(position).getRelease_date() != null ? results.get(position).getRelease_date() : "N/A";
+                    releaseDate = results.get(position).getRelease_date() != null ? Utilities.formatDate(results.get(position).getRelease_date()) : "N/A";
                 }else{
-                    releaseDate = results.get(position).getFirst_air_date() != null ? results.get(position).getFirst_air_date() : "N/A";
+                    releaseDate = results.get(position).getFirst_air_date() != null ? Utilities.formatDate(results.get(position).getFirst_air_date()) : "N/A";
                 }
 
                 String title;

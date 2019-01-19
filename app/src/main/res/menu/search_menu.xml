@@ -12,7 +12,8 @@
     <item
         android:id="@+id/action_wishList"
         android:title="WishList"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="collapseActionView"
+        android:visible="false"/>
 
 
 </menu>
