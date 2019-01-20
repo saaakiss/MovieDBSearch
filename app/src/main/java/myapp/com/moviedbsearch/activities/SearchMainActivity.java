@@ -109,6 +109,8 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_wishList:
+                Intent resultIntent = new Intent(this, WishListActivity.class);
+                startActivity(resultIntent);
                 return true;
         }
         return super.onOptionsItemSelected(item);

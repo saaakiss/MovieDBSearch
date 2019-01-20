@@ -94,7 +94,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
         String genre = movieDetails.getGenres() != null && movieDetails.getGenres().length > 0 ? movieDetails.getGenres()[0].getName() : "N/A";
         selectedItemDetails.setGenre(genre);
         selectedItemDetails.setId(movieDetails.getId());
-        selectedItemDetails.setItemType(ItemType.MOVIE.toString());
+        selectedItemDetails.setItemType(ItemType.MOVIE.toString().toLowerCase());
         selectedItemDetails.setRelease_date(movieDetails.getRelease_date());
         selectedItemDetails.setRatings(movieDetails.getVote_average());
 
@@ -128,7 +128,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
         String genre = tvDetails.getGenres() != null && tvDetails.getGenres().length > 0 ? tvDetails.getGenres()[0].getName() : "N/A";
         selectedItemDetails.setGenre(genre);
         selectedItemDetails.setId(tvDetails.getId());
-        selectedItemDetails.setItemType(ItemType.TV.toString());
+        selectedItemDetails.setItemType(ItemType.TV.toString().toLowerCase());
         selectedItemDetails.setRelease_date(tvDetails.getFirst_air_date());
         selectedItemDetails.setRatings(tvDetails.getVote_average());
 
@@ -171,5 +171,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
         long newRowId = db.insert(FavouriteItemEntry.TABLE_NAME, null, values);
 
         mView.notifyAboutQueryResult("item has been successfully added in wishlist");
+
+        db.close();
     }
 }

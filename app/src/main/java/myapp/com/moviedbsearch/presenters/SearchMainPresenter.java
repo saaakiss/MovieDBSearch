@@ -93,7 +93,7 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
                 }
                 item.setRatings(res.getVote_average());
                 item.setItemType(res.getMedia_type());
-                item.setImage(res.getPoster_path());
+                item.setImage("https://image.tmdb.org/t/p/original" + res.getPoster_path());
                 item.setId(res.getId());
 
                 filteredItemsDetails.add(item);

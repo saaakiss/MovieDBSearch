@@ -81,7 +81,7 @@ public class SearchMainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if(selectedItemsDetails.get(position).getImage() != null && !selectedItemsDetails.get(position).getImage().trim().isEmpty()){
                     RequestOptions requestOptions = new RequestOptions();
                     requestOptions.error(R.drawable.ic_placeholder);
-                    Glide.with(context).load("https://image.tmdb.org/t/p/original" + selectedItemsDetails.get(position).getImage()).apply(requestOptions).into(searchMainHolder.ivLogo);
+                    Glide.with(context).load(selectedItemsDetails.get(position).getImage()).apply(requestOptions).into(searchMainHolder.ivLogo);
                 }
                 else {
                     Glide.with(context).load(R.drawable.ic_placeholder).into(searchMainHolder.ivLogo);

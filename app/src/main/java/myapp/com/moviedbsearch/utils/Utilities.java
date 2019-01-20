@@ -54,10 +54,12 @@ public class Utilities {
 
         if(cursor.getCount() > 0){
             cursor.close();
+            db.close();
             return true;
         }
 
         cursor.close();
+        db.close();
 
         return false;
     }
@@ -91,10 +93,12 @@ public class Utilities {
 
         if(cursor.getCount() > 0){
             cursor.close();
+            db.close();
             return true;
         }
 
         cursor.close();
+        db.close();
         return false;
     }
 
