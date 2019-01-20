@@ -42,7 +42,7 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
 
             @Override
             public void onFailure(Call<MultiSearchResponse> call, Throwable t) {
-
+                mView.showError();
             }
         });
 
@@ -61,7 +61,7 @@ public class SearchMainPresenter implements SearchMainContract.Actions {
 
             @Override
             public void onFailure(Call<MultiSearchResponse> call, Throwable t) {
-
+                mView.showError();
             }
         });
     }

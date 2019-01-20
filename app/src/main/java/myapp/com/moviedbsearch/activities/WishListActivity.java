@@ -107,5 +107,12 @@ public class WishListActivity extends AppCompatActivity implements WishListContr
         Intent resultIntent = new Intent(this, WishListItemDetailsActivity.class);
         resultIntent.putExtra(SELECTEDCACHEDITEM, (SelectedItemDetails)selectedCachedItem);
         startActivity(resultIntent);
+        overridePendingTransition(R.anim.right_in, R.anim.left_out);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
     }
 }

@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -91,8 +92,13 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
             public boolean onQueryTextSubmit(String query) {
                 initVariables();
                 mQuery  = query;
-                progressBar.setVisibility(View.VISIBLE);
-                searchMainPresenter.getMoviesTvShows(query);
+                if (Utilities.isNetworkAvailable(SearchMainActivity.this)){
+                    progressBar.setVisibility(View.VISIBLE);
+                    searchMainPresenter.getMoviesTvShows(query);
+                }
+                else {
+                    Toast.makeText(SearchMainActivity.this, getString(R.string.no_network_access), Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
 
@@ -111,6 +117,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
             case R.id.action_wishList:
                 Intent resultIntent = new Intent(this, WishListActivity.class);
                 startActivity(resultIntent);
+                overridePendingTransition(R.anim.right_in, R.anim.left_out);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -129,9 +136,14 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         recyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
             protected void loadMoreItems() {
-                isLoading = true;
-                currentPage += 1;
-                loadNextPage();
+                if (Utilities.isNetworkAvailable(SearchMainActivity.this)){
+                    isLoading = true;
+                    currentPage += 1;
+                    loadNextPage();
+                }
+                else {
+                    Toast.makeText(SearchMainActivity.this, getString(R.string.no_network_access), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -150,7 +162,12 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
             }
         });
 
-        loadFirstPage();
+        if (Utilities.isNetworkAvailable(SearchMainActivity.this)){
+            loadFirstPage();
+        }
+        else {
+            Toast.makeText(SearchMainActivity.this, getString(R.string.no_network_access), Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -162,6 +179,7 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     }
 
     private void loadNextPage(){
+
         searchMainPresenter.getMoreMoviesTvShows(mQuery, currentPage);
     }
 
@@ -194,10 +212,18 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         Intent resultIntent = new Intent(this, DetailsActivity.class);
         resultIntent.putExtra(SELECTEDITEM, (SelectedItemDetails)selectedItem);
         startActivity(resultIntent);
+        overridePendingTransition(R.anim.right_in, R.anim.left_out);
     }
 
     @Override
     public void showError() {
+        progressBar.setVisibility(View.GONE);
+        Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
     }
 }

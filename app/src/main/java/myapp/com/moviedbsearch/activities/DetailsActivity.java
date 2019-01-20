@@ -23,6 +23,7 @@ import myapp.com.moviedbsearch.R;
 import myapp.com.moviedbsearch.contracts.DetailsContract;
 import myapp.com.moviedbsearch.models.SelectedItemDetails;
 import myapp.com.moviedbsearch.presenters.DetailsPresenter;
+import myapp.com.moviedbsearch.utils.Utilities;
 
 public class DetailsActivity extends AppCompatActivity implements DetailsContract.View {
 
@@ -61,7 +62,14 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
         setTitle(result.getItemType() + " details");
 
         mPresenter = new DetailsPresenter(this);
-        mPresenter.getResultDetails(result);
+
+        if (Utilities.isNetworkAvailable(this)){
+            mPresenter.getResultDetails(result);
+        }
+        else {
+            Toast.makeText(this, getString(R.string.no_network_access), Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -123,6 +131,13 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
 
     @Override
     public void showError() {
+        progressBar.setVisibility(View.GONE);
+        Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
     }
 }

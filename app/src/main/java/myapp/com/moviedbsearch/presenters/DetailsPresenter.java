@@ -52,7 +52,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
                 @Override
                 public void onFailure(Call<MovieDetails> call, Throwable t) {
-
+                    mView.showError();
                 }
             });
 
@@ -70,7 +70,7 @@ public class DetailsPresenter implements DetailsContract.Actions {
 
                 @Override
                 public void onFailure(Call<TvDetails> call, Throwable t) {
-
+                    mView.showError();
                 }
             });
         }

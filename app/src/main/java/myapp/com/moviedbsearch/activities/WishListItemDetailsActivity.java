@@ -95,4 +95,10 @@ public class WishListItemDetailsActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.left_in, R.anim.right_out);
+    }
+
 }
