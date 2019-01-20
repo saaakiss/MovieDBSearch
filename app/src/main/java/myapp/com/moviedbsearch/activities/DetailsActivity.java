@@ -36,7 +36,6 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     private TextView textViewSummary;
     private WebView videoWeb;
     private TextView textViewVideoWebTitle;
-    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +68,6 @@ public class DetailsActivity extends AppCompatActivity implements DetailsContrac
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.item_details_menu, menu);
-        this.menu = menu;
         return true;
     }
 

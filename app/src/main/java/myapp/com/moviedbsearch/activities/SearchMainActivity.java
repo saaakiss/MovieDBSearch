@@ -41,7 +41,6 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
     private String mQuery;
     private static final String SELECTEDITEM = "sel_tem";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -24,22 +24,18 @@ public class WishListItemDetailsActivity extends AppCompatActivity {
 
     private static final String SELECTEDCACHEDITEM = "sel_cached_tem";
     private ProgressBar progressBar;
-    private NestedScrollView nestedScrollView;
     private ImageView imageView;
     private TextView textViewTitle;
     private TextView textViewGenre;
     private TextView textViewSummary;
     private WebView videoWeb;
     private TextView textViewVideoWebTitle;
-    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        nestedScrollView = findViewById(R.id.detailsLayout);
-        nestedScrollView.setVisibility(View.GONE);
         progressBar = findViewById(R.id.progress_bar);
         imageView = findViewById(R.id.imageview_item);
         textViewTitle = findViewById(R.id.movie_title);
@@ -97,7 +93,6 @@ public class WishListItemDetailsActivity extends AppCompatActivity {
             textViewVideoWebTitle.setText("Trailer Unavailable");
         }
 
-        nestedScrollView.setVisibility(View.VISIBLE);
     }
 
 }
