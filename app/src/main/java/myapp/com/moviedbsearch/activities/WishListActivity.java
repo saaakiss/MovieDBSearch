@@ -31,18 +31,22 @@ public class WishListActivity extends AppCompatActivity implements WishListContr
     private SearchMainAdapter searchMainAdapter;
     private LinearLayoutManager linearLayoutManager;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
     private static final String SELECTEDCACHEDITEM = "sel_cached_tem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wish_list);
+        setContentView(R.layout.activity_search_main);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         setTitle("My WishList");
 
-        recyclerView = findViewById(R.id.rv_movies_tvShows_Cached);
+        recyclerView = findViewById(R.id.rv_movies_tvShows);
+        progressBar = findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
+
         wishListPresenter = new WishListPresenter(this);
         wishListPresenter.getAllMoviesTvShows(this);
     }
@@ -99,7 +103,9 @@ public class WishListActivity extends AppCompatActivity implements WishListContr
     }
 
     @Override
-    public void onItemClicked(Object object) {
-
+    public void onItemClicked(Object selectedCachedItem) {
+        Intent resultIntent = new Intent(this, WishListItemDetailsActivity.class);
+        resultIntent.putExtra(SELECTEDCACHEDITEM, (SelectedItemDetails)selectedCachedItem);
+        startActivity(resultIntent);
     }
 }
