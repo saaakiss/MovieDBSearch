@@ -220,10 +220,4 @@ public class SearchMainActivity extends AppCompatActivity implements SearchMainC
         progressBar.setVisibility(View.GONE);
         Toast.makeText(this, R.string.error_occurred, Toast.LENGTH_SHORT).show();
     }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.left_in, R.anim.right_out);
-    }
 }

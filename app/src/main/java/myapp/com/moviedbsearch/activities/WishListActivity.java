@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -98,16 +99,16 @@ public class WishListActivity extends AppCompatActivity implements WishListContr
     }
 
     @Override
-    public void showError() {
-
-    }
-
-    @Override
     public void onItemClicked(Object selectedCachedItem) {
         Intent resultIntent = new Intent(this, WishListItemDetailsActivity.class);
         resultIntent.putExtra(SELECTEDCACHEDITEM, (SelectedItemDetails)selectedCachedItem);
         startActivity(resultIntent);
         overridePendingTransition(R.anim.right_in, R.anim.left_out);
+    }
+
+    @Override
+    public void showError() {
+        Toast.makeText(this, R.string.no_matches_found, Toast.LENGTH_SHORT).show();
     }
 
     @Override

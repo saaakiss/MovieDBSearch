@@ -137,7 +137,14 @@ public class WishListPresenter implements WishListContract.Actions {
         cursor.close();
         db.close();
 
-        mView.showMoviesTvShows( selectedItemsDetails);
+        if(selectedItemsDetails.size() > 0){
+            mView.showMoviesTvShows( selectedItemsDetails);
+        }
+        else {
+            mView.showMoviesTvShows( selectedItemsDetails);
+            mView.showError();
+        }
+
     }
 
 }

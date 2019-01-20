@@ -14,8 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.WishListItemDetailsActivity"></activity>
-        <activity android:name=".activities.WishListActivity" />
+        <activity android:name=".activities.WishListItemDetailsActivity"
+            android:configChanges="orientation|screenSize"></activity>
+        <activity android:name=".activities.WishListActivity" android:configChanges="orientation|screenSize"/>
         <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -25,8 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.SearchMainActivity" />
-        <activity android:name=".activities.DetailsActivity" />
+        <activity android:name=".activities.SearchMainActivity" android:configChanges="orientation|screenSize"/>
+        <activity android:name=".activities.DetailsActivity" android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>
